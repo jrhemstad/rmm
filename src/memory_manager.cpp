@@ -20,6 +20,7 @@
 #include <rmm/mr/device/cuda_memory_resource.hpp>
 #include <rmm/mr/device/default_memory_resource.hpp>
 #include <rmm/mr/device/managed_memory_resource.hpp>
+#include <rmm/mr/device/cub_memory_resource.hpp>
 
 namespace rmm {
 /**
@@ -102,21 +103,25 @@ void Manager::initialize(const rmmOptions_t* new_options) {
 
   if (nullptr != new_options) options = *new_options;
 
-  if (usePoolAllocator()) {
-    auto pool_size = getOptions().initial_pool_size;
-    auto const& devices = getOptions().devices;
-    if (useManagedMemory()) {
-      initialized_resource.reset(
-          new rmm::mr::cnmem_managed_memory_resource(pool_size, devices));
+  /*
+    if (usePoolAllocator()) {
+      auto pool_size = getOptions().initial_pool_size;
+      auto const& devices = getOptions().devices;
+      if (useManagedMemory()) {
+        initialized_resource.reset(
+            new rmm::mr::cnmem_managed_memory_resource(pool_size, devices));
+      } else {
+        initialized_resource.reset(
+            new rmm::mr::cnmem_memory_resource(pool_size, devices));
+      }
+    } else if (rmm::Manager::useManagedMemory()) {
+      initialized_resource.reset(new rmm::mr::managed_memory_resource());
     } else {
-      initialized_resource.reset(
-          new rmm::mr::cnmem_memory_resource(pool_size, devices));
+      initialized_resource.reset(new rmm::mr::cuda_memory_resource());
     }
-  } else if (rmm::Manager::useManagedMemory()) {
-    initialized_resource.reset(new rmm::mr::managed_memory_resource());
-  } else {
-    initialized_resource.reset(new rmm::mr::cuda_memory_resource());
-  }
+    */
+
+  initialize_resource.reset(new rmm::mr::cub_memory_resource());
 
   rmm::mr::set_default_resource(initialized_resource.get());
 
