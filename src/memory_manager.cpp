@@ -121,7 +121,7 @@ void Manager::initialize(const rmmOptions_t* new_options) {
     }
     */
 
-  initialize_resource.reset(new rmm::mr::cub_memory_resource());
+  initialized_resource.reset(new rmm::mr::cub_memory_resource());
 
   rmm::mr::set_default_resource(initialized_resource.get());
 
